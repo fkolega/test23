@@ -17,8 +17,15 @@ export const connect_to_mongodb = async (): Promise<Db> => {
     database = client.db(database_name);
     return database;
   } catch (error) {
-    console.error('MongoDB connection error:', error);
-    throw error;
+    // Log detailed error for server-side debugging
+    console.error('MongoDB connection failed:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString(),
+      // Don't log the full error object to avoid exposing sensitive details
+    });
+    
+    // Throw sanitized error message that doesn't expose connection details
+    throw new Error('Database connection failed. Please check server configuration.');
   }
 };
 
